@@ -9,7 +9,7 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
 >
 
-<title>Stationnement par durée — Genève</title>
+<title>GVA FREEPARK</title>
 
 <link
     rel="icon"
@@ -55,6 +55,12 @@ html,body{
     --brand:rgb(82,110,101);
     --brand-light:#e8eeeb;
     --location-blue:#007aff;
+
+    --neon-green:#7ed321;
+    --neon-green-glow:rgba(126,211,33,.75);
+    --neon-orange:#f5821f;
+    --dark-bg:#0b0b0b;
+    --dark-panel:#141414;
 }
 
 .block-card{
@@ -73,34 +79,45 @@ html,body{
     top:10px;
     left:10px;
     z-index:40;
-    background:white;
-    padding:10px 16px;
-    border-radius:8px;
-    box-shadow:0 2px 8px rgba(0,0,0,.25);
-    border-left:5px solid var(--brand);
+    background:none;
+    border:none;
+    box-shadow:none;
+    padding:0;
     pointer-events:none;
-    max-width:calc(100vw - 90px);
+    max-width:calc(100vw - 70px);
     box-sizing:border-box;
 }
 
 #title-panel h1{
     margin:0;
-    font-size:18px;
-    line-height:1.2;
-    font-weight:700;
-    color:var(--brand);
-}
-
-#title-panel p{
-    margin:2px 0 0;
-    font-size:12px;
-    color:#666;
+    font-family:"Arial Black","Arial Narrow Bold",Impact,Haettenschweiler,sans-serif;
+    font-weight:900;
+    font-style:italic;
+    font-size:26px;
+    line-height:1;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    white-space:nowrap;
+    transform:skewX(-8deg);
+    transform-origin:left center;
+    color:var(--neon-green);
+    -webkit-text-stroke:1.2px var(--neon-orange);
+    text-stroke:1.2px var(--neon-orange);
+    text-shadow:
+        0 0 4px var(--neon-green-glow),
+        0 0 12px var(--neon-green-glow),
+        0 0 26px rgba(126,211,33,.55),
+        0 0 46px rgba(126,211,33,.35);
 }
 
 @media(min-width:700px){
 
-    #title-panel h1{ font-size:22px; }
-    #title-panel p{ font-size:13px; }
+    #title-panel h1{ font-size:46px; letter-spacing:1px; }
+}
+
+@media(min-width:1100px){
+
+    #title-panel h1{ font-size:58px; }
 }
 
 /* ---------- bouton légende ---------- */
@@ -110,20 +127,34 @@ html,body{
     z-index:41;
     top:10px;
     right:10px;
-    width:44px;
-    height:44px;
+    width:46px;
+    height:46px;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:white;
-    border:2px solid var(--brand);
+    background:var(--dark-bg);
+    border:2px solid var(--neon-green);
     border-radius:14px;
-    box-shadow:3px 3px 0 rgba(82,110,101,.18);
+    box-shadow:
+        0 0 6px var(--neon-green-glow),
+        0 0 16px rgba(126,211,33,.45),
+        inset 0 0 8px rgba(126,211,33,.25);
     cursor:pointer;
-    font-size:20px;
-    color:var(--brand);
+    font-family:"Arial Black",Impact,sans-serif;
+    font-weight:900;
+    font-size:19px;
+    color:var(--neon-green);
+    text-shadow:0 0 6px var(--neon-green-glow),0 0 14px rgba(126,211,33,.6);
     user-select:none;
     -webkit-tap-highlight-color:transparent;
+    transition:box-shadow .15s ease,transform .1s ease;
+}
+
+#legend-toggle:hover{
+    box-shadow:
+        0 0 10px var(--neon-green-glow),
+        0 0 26px rgba(126,211,33,.6),
+        inset 0 0 10px rgba(126,211,33,.35);
 }
 
 #legend-toggle:active{ transform:translate(1px,1px); }
@@ -133,7 +164,7 @@ html,body{
 #legend-panel{
     position:absolute;
     z-index:41;
-    top:62px;
+    top:64px;
     right:10px;
     width:260px;
     max-width:calc(100vw - 20px);
@@ -142,7 +173,14 @@ html,body{
     padding:14px 14px 12px;
     box-sizing:border-box;
     font-size:12.5px;
-    color:#333;
+    color:#ddd;
+    background:var(--dark-panel);
+    border:2px solid var(--neon-green);
+    border-radius:16px;
+    box-shadow:
+        0 0 10px var(--neon-green-glow),
+        0 0 26px rgba(126,211,33,.35),
+        0 8px 24px rgba(0,0,0,.5);
     transition:opacity .2s ease,transform .2s ease;
 }
 
@@ -155,7 +193,11 @@ html,body{
 #legend-panel h2{
     margin:0 0 4px;
     font-size:14px;
-    color:var(--brand);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color:var(--neon-green);
+    text-shadow:0 0 6px var(--neon-green-glow);
 }
 
 #legend-panel .subtitle{
@@ -167,7 +209,7 @@ html,body{
 .legend-section{
     margin-bottom:12px;
     padding-bottom:10px;
-    border-bottom:1px solid #eee;
+    border-bottom:1px solid #2a2a2a;
 }
 
 .legend-section:last-child{
@@ -181,7 +223,7 @@ html,body{
     font-size:10.5px;
     text-transform:uppercase;
     letter-spacing:.03em;
-    color:#888;
+    color:var(--neon-orange);
 }
 
 .legend-row{
@@ -228,7 +270,7 @@ html,body{
     width:16px;
     height:16px;
     flex:0 0 auto;
-    accent-color:var(--brand);
+    accent-color:var(--neon-green);
     cursor:pointer;
 }
 
@@ -237,12 +279,12 @@ html,body{
     width:13px;
     height:13px;
     border-radius:50%;
-    border:1.5px solid rgba(0,0,0,.15);
+    border:1.5px solid rgba(255,255,255,.25);
 }
 
 .layer-row span.txt{
     font-weight:bold;
-    color:#333;
+    color:#eee;
     font-size:13px;
 }
 
@@ -254,14 +296,15 @@ html,body{
     left:50%;
     bottom:26px;
     transform:translateX(-50%);
-    background:white;
-    border:2px solid var(--brand);
+    background:var(--dark-bg);
+    border:2px solid var(--neon-orange);
     border-radius:999px;
     padding:9px 18px;
     font-size:13px;
     font-weight:bold;
-    color:var(--brand);
-    box-shadow:3px 3px 0 rgba(82,110,101,.18);
+    color:var(--neon-orange);
+    text-shadow:0 0 8px rgba(245,130,31,.7);
+    box-shadow:0 0 10px rgba(245,130,31,.5),0 0 22px rgba(245,130,31,.3);
     white-space:nowrap;
     transition:opacity .2s ease;
 }
@@ -279,13 +322,15 @@ html,body{
     left:50%;
     top:14px;
     transform:translateX(-50%);
-    background:var(--brand);
-    color:white;
+    background:var(--dark-bg);
+    color:var(--neon-green);
+    border:2px solid var(--neon-green);
     border-radius:999px;
     padding:7px 16px;
     font-size:12.5px;
     font-weight:bold;
-    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    text-shadow:0 0 6px var(--neon-green-glow);
+    box-shadow:0 0 8px var(--neon-green-glow),0 0 18px rgba(126,211,33,.4);
     opacity:0;
     transition:opacity .2s ease;
     pointer-events:none;
@@ -297,8 +342,8 @@ html,body{
 
 .maplibregl-popup-content{
     border-radius:14px!important;
-    border:2px solid var(--brand);
-    box-shadow:3px 3px 0 rgba(82,110,101,.16)!important;
+    border:2px solid var(--neon-green);
+    box-shadow:0 0 8px var(--neon-green-glow),0 4px 16px rgba(0,0,0,.25)!important;
     padding:12px 14px!important;
     font-family:Arial,Helvetica,sans-serif;
 }
@@ -339,8 +384,27 @@ html,body{
 .maplibregl-ctrl-group{
     border-radius:14px!important;
     overflow:hidden;
-    border:2px solid var(--brand)!important;
-    box-shadow:3px 3px 0 rgba(82,110,101,.18)!important;
+    border:2px solid var(--neon-green)!important;
+    box-shadow:
+        0 0 8px var(--neon-green-glow),
+        0 0 18px rgba(126,211,33,.4)!important;
+    background:var(--dark-bg)!important;
+}
+
+.maplibregl-ctrl-group button{
+    background:var(--dark-bg)!important;
+}
+
+.maplibregl-ctrl-group button+button{
+    border-top:1px solid rgba(126,211,33,.35)!important;
+}
+
+.maplibregl-ctrl-icon{
+    filter:invert(1) brightness(1.4) drop-shadow(0 0 3px var(--neon-green-glow));
+}
+
+.maplibregl-ctrl-group button:hover{
+    background:#1a1a1a!important;
 }
 
 @media(max-width:700px){
@@ -356,11 +420,10 @@ html,body{
 <div id="map"></div>
 
 <div id="title-panel">
-    <h1>Stationnement par durée</h1>
-    <p>Genève — les places longues durées sautent aux yeux</p>
+    <h1>GVA FREEPARK</h1>
 </div>
 
-<div id="legend-toggle" title="Afficher / masquer la légende">🅿️</div>
+<div id="legend-toggle" title="Afficher / masquer la légende">P</div>
 
 <div id="legend-panel" class="hidden">
     <h2>Légende</h2>
@@ -694,10 +757,59 @@ const DURATION_WIDTH_BASE = [
 ];
 
 const ZOOM_WIDTH_FACTOR =
-    ["interpolate",["linear"],["zoom"], 14,1, 20,2.4];
+    ["interpolate",["linear"],["zoom"], 14,1.3, 20,3];
 
 const DURATION_WIDTH_EXPR =
     ["*",DURATION_WIDTH_BASE,ZOOM_WIDTH_FACTOR];
+
+/* libellé court affiché directement sur chaque tronçon */
+const DURATION_LABEL_MATCH = [
+    "match",
+    ["get","TYPE_STATIONNEMENT"],
+
+    "Gratuit 30 min","30 min",
+    "Payant 30 min","30 min €",
+    "Gratuit 60 min","1 h",
+    "Payant 60 min","1 h €",
+    "Gratuit 120 min","2 h",
+    "Payant 90 min","1 h 30 €",
+    "Payant 120 min","2 h €",
+    "Gratuit 180 min","3 h",
+    "Gratuit 240 min","4 h",
+    "Gratuit 15 heures","15 h",
+    "Gratuit illimité","Illimité",
+    "Payant illimité","Illimité €",
+    "Habitant / nuit","Résident",
+    "Gratuit jaune","Zone jaune",
+    "Gratuit jaune spécial","Zone jaune +",
+    "Electrique","Électrique",
+    "Mobility","Mobility",
+    "Cases 2 roues","Motos",
+    "Cars","Cars",
+    "Ambulance","Ambulance",
+    "Police","Police",
+    "Autre","Autre",
+    "Stationnement interdit","Interdit",
+
+    ""
+];
+
+/* durée + nombre de places sur deux lignes quand l'info existe */
+const DURATION_TEXT_FIELD = [
+    "case",
+    ["all",["has","NOMBRE_PLACES"],[">",["get","NOMBRE_PLACES"],0]],
+    ["concat",DURATION_LABEL_MATCH,"\n",["to-string",["get","NOMBRE_PLACES"]]," pl."],
+    DURATION_LABEL_MATCH
+];
+
+/* texte plus grand pour les durées longues / illimitées : c'est
+   l'information la plus utile pour savoir où se garer durablement */
+const DURATION_TEXT_SIZE = [
+    "case",
+    ["in",["get","TYPE_STATIONNEMENT"],["literal",["Gratuit illimité","Payant illimité","Habitant / nuit","Gratuit 15 heures"]]],
+    ["interpolate",["linear"],["zoom"], 15,12, 20,17],
+    ["interpolate",["linear"],["zoom"], 15,9, 20,13]
+];
 
 /* opacité réduite pour les catégories "hors sujet durée" */
 const DURATION_OPACITY_MATCH = [
@@ -755,6 +867,21 @@ function addAllSourcesAndLayers(){
         }
     });
 
+    /* liseré blanc sous les traits "normaux" pour qu'ils se détachent
+       nettement du fond de plan clair (utile pour les couleurs pâles) */
+    map.addLayer({
+        id:"stationnement-halo",
+        type:"line",
+        source:"stationnement",
+        filter:["!",["in",["get","TYPE_STATIONNEMENT"],["literal",ILLIMITE_TYPES]]],
+        layout:{"line-cap":"round","line-join":"round"},
+        paint:{
+            "line-color":"#ffffff",
+            "line-width":["+",DURATION_WIDTH_EXPR,1.8],
+            "line-opacity":0.9
+        }
+    });
+
     /* trait principal, coloré/épaissi selon la durée */
     map.addLayer({
         id:"stationnement-line",
@@ -798,23 +925,30 @@ function addAllSourcesAndLayers(){
         }
     });
 
-    /* nombre de places, affiché de près */
+    /* durée (+ nombre de places) écrite directement sur chaque tronçon,
+       pour savoir où se garer sans avoir à cliquer */
     map.addLayer({
-        id:"stationnement-labels",
+        id:"stationnement-duration-label",
         type:"symbol",
         source:"stationnement",
-        minzoom:17,
-        filter:["has","NOMBRE_PLACES"],
+        minzoom:15,
+        filter:["!=",DURATION_LABEL_MATCH,""],
         layout:{
             "symbol-placement":"line-center",
-            "text-field":["to-string",["get","NOMBRE_PLACES"]],
-            "text-size":11,
-            "text-font":["Noto Sans Bold"]
+            "text-field":DURATION_TEXT_FIELD,
+            "text-size":DURATION_TEXT_SIZE,
+            "text-font":["Noto Sans Bold"],
+            "text-rotation-alignment":"viewport",
+            "text-pitch-alignment":"viewport",
+            "text-keep-upright":true,
+            "text-line-height":1.05,
+            "text-padding":2
         },
         paint:{
-            "text-color":"#222",
+            "text-color":DURATION_COLOR_MATCH,
             "text-halo-color":"#ffffff",
-            "text-halo-width":1.4
+            "text-halo-width":1.8,
+            "text-halo-blur":0.2
         }
     });
 
@@ -971,4 +1105,3 @@ map.on("moveend",loadStationnement);
 
 </body>
 </html>
-
