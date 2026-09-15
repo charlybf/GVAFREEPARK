@@ -424,8 +424,8 @@ const SITG_PARKING_URL =
     "https://vector.sitg.ge.ch/arcgis/rest/services/OTC_PARKING/MapServer/0/query";
 
 const STATIONNEMENT_MIN_ZOOM = 15;
-const MAX_BOUNDS_WIDTH = 0.05;
-const MAX_BOUNDS_HEIGHT = 0.05;
+const MAX_BOUNDS_WIDTH = 0.2;
+const MAX_BOUNDS_HEIGHT = 0.2;
 
 const map =
     new maplibregl.Map({
@@ -971,4 +971,3 @@ map.on("moveend",loadStationnement);
 
 </body>
 </html>
-
