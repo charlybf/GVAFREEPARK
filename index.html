@@ -1,280 +1,973 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
-        <link rel="stylesheet" href="css/qgis2web.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
-        <style>
-        html, body, #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
-        </style>
-        <title>Geneva free park facilities</title>
-    </head>
-    <body>
-        <div id="map">
-        </div>
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/L.Control.Locate.min.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
-        <script src="data/OTC_STATIONNEMENT_V_PUBLIQUE_1.js"></script>
-        <script>
-        var highlightLayer;
-        function highlightFeature(e) {
-            highlightLayer = e.target;
-            highlightLayer.openPopup();
-        }
-        var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:1
-        })
-        var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        // remove popup's row if "visible-with-data"
-        function removeEmptyRowsFromPopupContent(content, feature) {
-         var tempDiv = document.createElement('div');
-         tempDiv.innerHTML = content;
-         var rows = tempDiv.querySelectorAll('tr');
-         for (var i = 0; i < rows.length; i++) {
-             var td = rows[i].querySelector('td.visible-with-data');
-             var key = td ? td.id : '';
-             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
-                 rows[i].parentNode.removeChild(rows[i]);
-             }
-         }
-         return tempDiv.innerHTML;
-        }
-        // add class to format popup if it contains media
-		function addClassToPopupIfMedia(content, popup) {
-			var tempDiv = document.createElement('div');
-			tempDiv.innerHTML = content;
-			if (tempDiv.querySelector('td img')) {
-				popup._contentNode.classList.add('media');
-					// Delay to force the redraw
-					setTimeout(function() {
-						popup.update();
-					}, 10);
-			} else {
-				popup._contentNode.classList.remove('media');
-			}
-		}
-        var title = new L.Control({'position':'topleft'});
-        title.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info');
-            this.update();
-            return this._div;
-        };
-        title.update = function () {
-            this._div.innerHTML = '<h2>Geneva free park facilities</h2>';
-        };
-        title.addTo(map);
-        var zoomControl = L.control.zoom({
-            position: 'topleft'
-        }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
-        var bounds_group = new L.featureGroup([]);
-        function setBounds() {
-            if (bounds_group.getLayers().length) {
-                map.fitBounds(bounds_group.getBounds());
-            }
-        }
-        map.createPane('pane_Fondplanblackwhite_0');
-        map.getPane('pane_Fondplanblackwhite_0').style.zIndex = 400;
-        var layer_Fondplanblackwhite_0 = L.tileLayer('https://api.maptiler.com/maps/backdrop/{z}/{x}/{y}.png?key=BIcIzrGiQ3S6JLa5odJ4', {
-            pane: 'pane_Fondplanblackwhite_0',
-            opacity: 1.0,
-            attribution: '',
-            minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 18
-        });
-        layer_Fondplanblackwhite_0;
-        map.addLayer(layer_Fondplanblackwhite_0);
-        function pop_OTC_STATIONNEMENT_V_PUBLIQUE_1(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nom_rues'] !== null ? autolinker.link(String(feature.properties['nom_rues']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['type_stationnement'] !== null ? autolinker.link(String(feature.properties['type_stationnement']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['nombre_places'] !== null ? autolinker.link(String(feature.properties['nombre_places']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
-        }
+<!DOCTYPE html>
+<html lang="fr">
+<head>
 
-        function style_OTC_STATIONNEMENT_V_PUBLIQUE_1_0(feature) {
-            switch(String(feature.properties['type_stationnement'])) {
-                case 'Gratuit 30 min':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(166,206,227,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit 60 min':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(31,120,180,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit 120 min':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(51,160,44,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit 180 min':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(178,223,138,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit 240 min':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(44,255,0,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit 15 heures':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(240,167,167,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-                case 'Gratuit illimité':
-                    return {
-                pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-                opacity: 1,
-                color: 'rgba(255,0,237,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.0,
-                fillOpacity: 0,
-                interactive: true,
-            }
-                    break;
-            }
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+>
+
+<title>Stationnement par durée — Genève</title>
+
+<link
+    rel="icon"
+    type="image/svg+xml"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23526e65'/%3E%3Ctext x='32' y='44' font-family='Arial,Helvetica,sans-serif' font-weight='bold' font-size='36' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E"
+>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Stationnement Genève">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#526e65">
+
+<link
+    rel="manifest"
+    href="data:application/manifest+json,%7B%22name%22%3A%22Stationnement%20-%20Gen%C3%A8ve%22%2C%22short_name%22%3A%22Stationnement%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%23e8eeeb%22%2C%22theme_color%22%3A%22%23526e65%22%7D"
+>
+
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.css"
+>
+
+<style>
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+#map{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+:root{
+    --brand:rgb(82,110,101);
+    --brand-light:#e8eeeb;
+    --location-blue:#007aff;
+}
+
+.block-card{
+    background:#ffffff;
+    border:2px solid var(--brand);
+    border-radius:22px;
+    box-shadow:
+        5px 5px 0 rgba(82,110,101,.18),
+        0 10px 30px rgba(0,0,0,.15);
+}
+
+/* ---------- titre ---------- */
+
+#title-panel{
+    position:absolute;
+    top:10px;
+    left:10px;
+    z-index:40;
+    background:white;
+    padding:10px 16px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    border-left:5px solid var(--brand);
+    pointer-events:none;
+    max-width:calc(100vw - 90px);
+    box-sizing:border-box;
+}
+
+#title-panel h1{
+    margin:0;
+    font-size:18px;
+    line-height:1.2;
+    font-weight:700;
+    color:var(--brand);
+}
+
+#title-panel p{
+    margin:2px 0 0;
+    font-size:12px;
+    color:#666;
+}
+
+@media(min-width:700px){
+
+    #title-panel h1{ font-size:22px; }
+    #title-panel p{ font-size:13px; }
+}
+
+/* ---------- bouton légende ---------- */
+
+#legend-toggle{
+    position:absolute;
+    z-index:41;
+    top:10px;
+    right:10px;
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    border:2px solid var(--brand);
+    border-radius:14px;
+    box-shadow:3px 3px 0 rgba(82,110,101,.18);
+    cursor:pointer;
+    font-size:20px;
+    color:var(--brand);
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+#legend-toggle:active{ transform:translate(1px,1px); }
+
+/* ---------- panneau légende ---------- */
+
+#legend-panel{
+    position:absolute;
+    z-index:41;
+    top:62px;
+    right:10px;
+    width:260px;
+    max-width:calc(100vw - 20px);
+    max-height:calc(100vh - 90px);
+    overflow-y:auto;
+    padding:14px 14px 12px;
+    box-sizing:border-box;
+    font-size:12.5px;
+    color:#333;
+    transition:opacity .2s ease,transform .2s ease;
+}
+
+#legend-panel.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(-6px);
+}
+
+#legend-panel h2{
+    margin:0 0 4px;
+    font-size:14px;
+    color:var(--brand);
+}
+
+#legend-panel .subtitle{
+    margin:0 0 10px;
+    font-size:11px;
+    color:#999;
+}
+
+.legend-section{
+    margin-bottom:12px;
+    padding-bottom:10px;
+    border-bottom:1px solid #eee;
+}
+
+.legend-section:last-child{
+    border-bottom:none;
+    margin-bottom:0;
+    padding-bottom:0;
+}
+
+.legend-section h3{
+    margin:0 0 6px;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color:#888;
+}
+
+.legend-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:3px 0;
+}
+
+.legend-swatch{
+    flex:0 0 auto;
+    width:26px;
+    height:6px;
+    border-radius:3px;
+}
+
+.legend-swatch.dashed{
+    background-image:linear-gradient(to right,#d81e2c 60%,transparent 0%);
+    background-size:6px 6px;
+    background-repeat:repeat-x;
+    background-color:transparent;
+}
+
+.legend-swatch.glow{
+    box-shadow:0 0 6px 2px rgba(216,30,44,.55);
+}
+
+.legend-swatch.thick{ height:8px; }
+.legend-swatch.dim{ opacity:.55; }
+
+/* checkbox rows (motos / parkings) */
+
+.layer-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    padding:4px 0;
+}
+
+.layer-row input[type="checkbox"]{
+    width:16px;
+    height:16px;
+    flex:0 0 auto;
+    accent-color:var(--brand);
+    cursor:pointer;
+}
+
+.layer-row .dot{
+    flex:0 0 auto;
+    width:13px;
+    height:13px;
+    border-radius:50%;
+    border:1.5px solid rgba(0,0,0,.15);
+}
+
+.layer-row span.txt{
+    font-weight:bold;
+    color:#333;
+    font-size:13px;
+}
+
+/* ---------- indicateur de zoom ---------- */
+
+#zoom-hint{
+    position:absolute;
+    z-index:39;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%);
+    background:white;
+    border:2px solid var(--brand);
+    border-radius:999px;
+    padding:9px 18px;
+    font-size:13px;
+    font-weight:bold;
+    color:var(--brand);
+    box-shadow:3px 3px 0 rgba(82,110,101,.18);
+    white-space:nowrap;
+    transition:opacity .2s ease;
+}
+
+#zoom-hint.hidden{
+    opacity:0;
+    pointer-events:none;
+}
+
+/* ---------- indicateur de chargement ---------- */
+
+#loading-indicator{
+    position:absolute;
+    z-index:39;
+    left:50%;
+    top:14px;
+    transform:translateX(-50%);
+    background:var(--brand);
+    color:white;
+    border-radius:999px;
+    padding:7px 16px;
+    font-size:12.5px;
+    font-weight:bold;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    opacity:0;
+    transition:opacity .2s ease;
+    pointer-events:none;
+}
+
+#loading-indicator.visible{ opacity:1; }
+
+/* ---------- popup ---------- */
+
+.maplibregl-popup-content{
+    border-radius:14px!important;
+    border:2px solid var(--brand);
+    box-shadow:3px 3px 0 rgba(82,110,101,.16)!important;
+    padding:12px 14px!important;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.parking-popup h3{
+    margin:0 0 6px;
+    font-size:14.5px;
+    color:var(--brand);
+}
+
+.parking-popup table{
+    border-collapse:collapse;
+    font-size:12.5px;
+    width:100%;
+}
+
+.parking-popup td{ padding:2px 0; vertical-align:top; }
+.parking-popup td.label{ color:#888; padding-right:10px; white-space:nowrap; }
+.parking-popup a{ color:var(--brand); font-weight:bold; }
+
+.parking-swatch{
+    display:inline-block;
+    width:14px;
+    height:14px;
+    border-radius:4px;
+    vertical-align:middle;
+    margin-right:6px;
+}
+
+/* ---------- contrôles maplibre ---------- */
+
+.maplibregl-ctrl-top-right{
+    top:auto!important;
+    bottom:10px!important;
+    right:10px!important;
+}
+
+.maplibregl-ctrl-group{
+    border-radius:14px!important;
+    overflow:hidden;
+    border:2px solid var(--brand)!important;
+    box-shadow:3px 3px 0 rgba(82,110,101,.18)!important;
+}
+
+@media(max-width:700px){
+
+    #legend-panel{ width:230px; font-size:12px; }
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="title-panel">
+    <h1>Stationnement par durée</h1>
+    <p>Genève — les places longues durées sautent aux yeux</p>
+</div>
+
+<div id="legend-toggle" title="Afficher / masquer la légende">🅿️</div>
+
+<div id="legend-panel" class="hidden">
+    <h2>Légende</h2>
+    <p class="subtitle">Plus la couleur est intense, plus la durée est longue.</p>
+
+    <div class="legend-section">
+        <h3>Durée de stationnement</h3>
+        <div class="legend-row"><span class="legend-swatch" style="background:#c8d6e5"></span>Courte (30–60 min)</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#4f8fc7"></span>Moyenne (90–120 min)</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#f4a93c"></span>Longue (180–240 min)</div>
+        <div class="legend-row"><span class="legend-swatch" style="background:#e8632a"></span>Très longue (15 heures)</div>
+        <div class="legend-row"><span class="legend-swatch glow" style="background:#d81e2c"></span><b>Illimitée / résident</b></div>
+        <div class="legend-row"><span class="legend-swatch dashed"></span>Illimitée payante</div>
+    </div>
+
+    <div class="legend-section">
+        <h3>Autres marquages</h3>
+        <div class="legend-row"><span class="legend-swatch dim" style="background:#b8b8b8"></span>Zones spéciales / réservées</div>
+        <div class="legend-row"><span class="legend-swatch thick" style="background:#5a5a5a"></span>Stationnement interdit</div>
+    </div>
+
+    <div class="legend-section">
+        <label class="layer-row">
+            <input type="checkbox" id="chk-motos" checked>
+            <span class="dot" style="background:#8b5cf6"></span>
+            <span class="txt">Mettre en évidence les cases motos</span>
+        </label>
+    </div>
+
+    <div class="legend-section">
+        <label class="layer-row">
+            <input type="checkbox" id="chk-parking" checked>
+            <span class="dot" style="background:#3a5f52"></span>
+            <span class="txt">Parkings publics</span>
+        </label>
+    </div>
+</div>
+
+<div id="zoom-hint" class="hidden">Zoomez pour voir le stationnement</div>
+<div id="loading-indicator">Chargement…</div>
+
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
+
+<script>
+
+/* ==========================================================
+   Fond de plan — repris de Mappes sardes (OpenFreeMap Positron)
+   ========================================================== */
+
+const OPENFREEMAP_STYLE =
+    "https://tiles.openfreemap.org/styles/positron";
+
+/* ==========================================================
+   Services SITG
+   ========================================================== */
+
+const SITG_STATIONNEMENT_URL =
+    "https://vector.sitg.ge.ch/arcgis/rest/services/OTC_STATIONNEMENT_V_PUBLIQUE/MapServer/0/query";
+
+const SITG_PARKING_URL =
+    "https://vector.sitg.ge.ch/arcgis/rest/services/OTC_PARKING/MapServer/0/query";
+
+const STATIONNEMENT_MIN_ZOOM = 15;
+const MAX_BOUNDS_WIDTH = 0.05;
+const MAX_BOUNDS_HEIGHT = 0.05;
+
+const map =
+    new maplibregl.Map({
+
+        container:"map",
+
+        style:OPENFREEMAP_STYLE,
+
+        center:[6.1432,46.2044],
+
+        zoom:
+            window.innerWidth<=600
+            ? 13.5
+            : 14.5,
+
+        attributionControl:{
+            compact:true
         }
-        map.createPane('pane_OTC_STATIONNEMENT_V_PUBLIQUE_1');
-        map.getPane('pane_OTC_STATIONNEMENT_V_PUBLIQUE_1').style.zIndex = 401;
-        map.getPane('pane_OTC_STATIONNEMENT_V_PUBLIQUE_1').style['mix-blend-mode'] = 'normal';
-        var layer_OTC_STATIONNEMENT_V_PUBLIQUE_1 = new L.geoJson(json_OTC_STATIONNEMENT_V_PUBLIQUE_1, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-            layerName: 'layer_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-            pane: 'pane_OTC_STATIONNEMENT_V_PUBLIQUE_1',
-            onEachFeature: pop_OTC_STATIONNEMENT_V_PUBLIQUE_1,
-            style: style_OTC_STATIONNEMENT_V_PUBLIQUE_1_0,
+    });
+
+map.addControl(
+    new maplibregl.NavigationControl(),
+    "top-right"
+);
+
+/* géolocalisation */
+map.addControl(
+    new maplibregl.GeolocateControl({
+        positionOptions:{enableHighAccuracy:true},
+        trackUserLocation:true,
+        showUserHeading:true
+    }),
+    "top-right"
+);
+
+let activePopup = null;
+
+function openPopup(lngLat,html){
+
+    if(activePopup)
+        activePopup.remove();
+
+    activePopup =
+        new maplibregl.Popup({maxWidth:"270px"})
+            .setLngLat(lngLat)
+            .setHTML(html)
+            .addTo(map);
+}
+
+function showLoading(){ document.getElementById("loading-indicator").classList.add("visible"); }
+function hideLoading(){ document.getElementById("loading-indicator").classList.remove("visible"); }
+
+function getCurrentBounds(){
+
+    const b = map.getBounds();
+
+    return {
+        xmin:b.getWest(),
+        ymin:b.getSouth(),
+        xmax:b.getEast(),
+        ymax:b.getNorth(),
+        width:b.getEast()-b.getWest(),
+        height:b.getNorth()-b.getSouth()
+    };
+}
+
+function getBoundsKey(bounds){
+
+    return [
+        bounds.xmin.toFixed(3),
+        bounds.ymin.toFixed(3),
+        bounds.xmax.toFixed(3),
+        bounds.ymax.toFixed(3)
+    ].join(",");
+}
+
+function clearSource(sourceId){
+
+    const source = map.getSource(sourceId);
+
+    if(source)
+        source.setData({type:"FeatureCollection",features:[]});
+}
+
+function updateZoomHint(){
+
+    const hint = document.getElementById("zoom-hint");
+
+    if(map.getZoom()<STATIONNEMENT_MIN_ZOOM)
+        hint.classList.remove("hidden");
+    else
+        hint.classList.add("hidden");
+}
+
+/* ==========================================================
+   Stationnement — chargement bbox + zoom gated
+   ========================================================== */
+
+let stationnementRequestId = 0;
+let stationnementAbortController = null;
+const stationnementCache = new Map();
+
+async function loadStationnement(){
+
+    updateZoomHint();
+
+    if(map.getZoom()<STATIONNEMENT_MIN_ZOOM){
+        clearSource("stationnement");
+        return;
+    }
+
+    const bounds = getCurrentBounds();
+
+    if(bounds.width>MAX_BOUNDS_WIDTH || bounds.height>MAX_BOUNDS_HEIGHT)
+        return;
+
+    const cacheKey = getBoundsKey(bounds);
+
+    if(stationnementCache.has(cacheKey)){
+
+        const source = map.getSource("stationnement");
+
+        if(source)
+            source.setData({type:"FeatureCollection",features:stationnementCache.get(cacheKey)});
+
+        return;
+    }
+
+    const requestId = ++stationnementRequestId;
+
+    stationnementAbortController && stationnementAbortController.abort();
+    stationnementAbortController = new AbortController();
+    const signal = stationnementAbortController.signal;
+
+    const params = new URLSearchParams({
+        where:"1=1",
+        geometry:`${bounds.xmin},${bounds.ymin},${bounds.xmax},${bounds.ymax}`,
+        geometryType:"esriGeometryEnvelope",
+        inSR:"4326",
+        spatialRel:"esriSpatialRelIntersects",
+        outFields:"*",
+        returnGeometry:"true",
+        outSR:"4326",
+        f:"geojson",
+        resultRecordCount:"3000"
+    });
+
+    showLoading();
+
+    try{
+
+        const response = await fetch(SITG_STATIONNEMENT_URL+"?"+params.toString(),{signal});
+
+        if(requestId!==stationnementRequestId) return;
+
+        if(!response.ok)
+            throw new Error("Erreur SITG stationnement : "+response.status);
+
+        const geojson = await response.json();
+
+        if(requestId!==stationnementRequestId) return;
+
+        const features = geojson.features || [];
+
+        const source = map.getSource("stationnement");
+
+        if(source)
+            source.setData({type:"FeatureCollection",features});
+
+        stationnementCache.set(cacheKey,features);
+
+    }
+    catch(error){
+
+        if(error.name!=="AbortError")
+            console.error("Erreur chargement stationnement :",error);
+    }
+    finally{
+        hideLoading();
+    }
+}
+
+/* ==========================================================
+   Parkings publics — chargement unique (canton entier)
+   ========================================================== */
+
+async function loadParkingPublic(){
+
+    const params = new URLSearchParams({
+        where:"1=1",
+        outFields:"*",
+        returnGeometry:"true",
+        outSR:"4326",
+        f:"geojson"
+    });
+
+    try{
+
+        const response = await fetch(SITG_PARKING_URL+"?"+params.toString());
+
+        if(!response.ok)
+            throw new Error("Erreur SITG parkings : "+response.status);
+
+        const geojson = await response.json();
+
+        const source = map.getSource("parking-public");
+
+        if(source)
+            source.setData(geojson);
+
+    }
+    catch(error){
+        console.error("Erreur chargement parkings publics :",error);
+    }
+}
+
+/* ==========================================================
+   Style — priorité visuelle à la DURÉE plutôt qu'à la catégorie
+   ========================================================== */
+
+/* couleur par palier de durée : pâle/court -> vif/long-illimité */
+const DURATION_COLOR_MATCH = [
+    "match",
+    ["get","TYPE_STATIONNEMENT"],
+
+    "Gratuit 30 min","#c8d6e5",
+    "Payant 30 min","#c8d6e5",
+
+    "Gratuit 60 min","#8ab4d8",
+    "Payant 60 min","#8ab4d8",
+
+    "Gratuit 120 min","#4f8fc7",
+    "Payant 90 min","#4f8fc7",
+    "Payant 120 min","#4f8fc7",
+
+    "Gratuit 180 min","#f4a93c",
+    "Gratuit 240 min","#f4a93c",
+
+    "Gratuit 15 heures","#e8632a",
+
+    "Gratuit illimité","#d81e2c",
+    "Payant illimité","#d81e2c",
+    "Habitant / nuit","#d81e2c",
+
+    "Stationnement interdit","#5a5a5a",
+
+    /* défaut : zones jaunes, électrique, mobility, cars, ambulance,
+       police, autre, cases 2 roues (motos) -> neutre, discret */
+    "#b8b8b8"
+];
+
+/* largeur de base par catégorie (avant multiplicateur de zoom) */
+const DURATION_WIDTH_BASE = [
+    "match",
+    ["get","TYPE_STATIONNEMENT"],
+
+    "Gratuit 30 min",1.2, "Payant 30 min",1.2,
+    "Gratuit 60 min",1.6, "Payant 60 min",1.6,
+    "Gratuit 120 min",2.2, "Payant 90 min",2.2, "Payant 120 min",2.2,
+    "Gratuit 180 min",2.8, "Gratuit 240 min",2.8,
+    "Gratuit 15 heures",3.6,
+    "Gratuit illimité",5, "Payant illimité",5, "Habitant / nuit",4.2,
+    "Stationnement interdit",4,
+
+    1.2
+];
+
+const ZOOM_WIDTH_FACTOR =
+    ["interpolate",["linear"],["zoom"], 14,1, 20,2.4];
+
+const DURATION_WIDTH_EXPR =
+    ["*",DURATION_WIDTH_BASE,ZOOM_WIDTH_FACTOR];
+
+/* opacité réduite pour les catégories "hors sujet durée" */
+const DURATION_OPACITY_MATCH = [
+    "match",
+    ["get","TYPE_STATIONNEMENT"],
+
+    "Gratuit jaune",0.55,
+    "Gratuit jaune spécial",0.55,
+    "Electrique",0.55,
+    "Mobility",0.55,
+    "Cars",0.55,
+    "Ambulance",0.55,
+    "Police",0.55,
+    "Autre",0.55,
+    "Cases 2 roues",0.55,
+    "Stationnement interdit",0.85,
+
+    1
+];
+
+const ILLIMITE_TYPES = ["Gratuit illimité","Payant illimité","Habitant / nuit"];
+
+function typeColorForPopup(type){
+
+    const pairs = DURATION_COLOR_MATCH.slice(2,-1);
+
+    for(let i=0;i<pairs.length;i+=2){
+
+        if(pairs[i]===type)
+            return pairs[i+1];
+    }
+
+    return "#b8b8b8";
+}
+
+function addAllSourcesAndLayers(){
+
+    const emptyFC = {type:"FeatureCollection",features:[]};
+
+    map.addSource("stationnement",{type:"geojson",data:emptyFC,buffer:1,tolerance:1});
+
+    /* halo rouge sous les places illimitées / longue durée résident,
+       pour qu'elles soient perceptibles même en un coup d'oeil */
+    map.addLayer({
+        id:"stationnement-glow-illimite",
+        type:"line",
+        source:"stationnement",
+        filter:["in",["get","TYPE_STATIONNEMENT"],["literal",ILLIMITE_TYPES]],
+        layout:{"line-cap":"round","line-join":"round"},
+        paint:{
+            "line-color":"#d81e2c",
+            "line-width":["interpolate",["linear"],["zoom"], 14,8, 20,22],
+            "line-opacity":0.28,
+            "line-blur":2.5
+        }
+    });
+
+    /* trait principal, coloré/épaissi selon la durée */
+    map.addLayer({
+        id:"stationnement-line",
+        type:"line",
+        source:"stationnement",
+        filter:["!=",["get","TYPE_STATIONNEMENT"],"Payant illimité"],
+        layout:{"line-cap":"round","line-join":"round"},
+        paint:{
+            "line-color":DURATION_COLOR_MATCH,
+            "line-width":DURATION_WIDTH_EXPR,
+            "line-opacity":DURATION_OPACITY_MATCH
+        }
+    });
+
+    /* "Payant illimité" — même couleur vive que les autres illimités,
+       mais tireté pour le distinguer du gratuit illimité */
+    map.addLayer({
+        id:"stationnement-dash-payant-illimite",
+        type:"line",
+        source:"stationnement",
+        filter:["==",["get","TYPE_STATIONNEMENT"],"Payant illimité"],
+        layout:{"line-cap":"butt","line-join":"round"},
+        paint:{
+            "line-color":"#d81e2c",
+            "line-dasharray":[2,1.6],
+            "line-width":DURATION_WIDTH_EXPR
+        }
+    });
+
+    /* mise en évidence optionnelle des cases motos */
+    map.addLayer({
+        id:"motos-highlight",
+        type:"line",
+        source:"stationnement",
+        filter:["==",["get","TYPE_STATIONNEMENT"],"Cases 2 roues"],
+        layout:{"line-cap":"round","line-join":"round"},
+        paint:{
+            "line-color":"#8b5cf6",
+            "line-width":["interpolate",["linear"],["zoom"], 14,3, 20,7],
+            "line-opacity":0.95
+        }
+    });
+
+    /* nombre de places, affiché de près */
+    map.addLayer({
+        id:"stationnement-labels",
+        type:"symbol",
+        source:"stationnement",
+        minzoom:17,
+        filter:["has","NOMBRE_PLACES"],
+        layout:{
+            "symbol-placement":"line-center",
+            "text-field":["to-string",["get","NOMBRE_PLACES"]],
+            "text-size":11,
+            "text-font":["Noto Sans Bold"]
+        },
+        paint:{
+            "text-color":"#222",
+            "text-halo-color":"#ffffff",
+            "text-halo-width":1.4
+        }
+    });
+
+    /* parkings publics (points, statique) */
+    map.addSource("parking-public",{type:"geojson",data:emptyFC});
+
+    map.addLayer({
+        id:"parking-public-circle",
+        type:"circle",
+        source:"parking-public",
+        paint:{
+            "circle-radius":["interpolate",["linear"],["zoom"], 11,5, 18,12],
+            "circle-color":"#3a5f52",
+            "circle-stroke-color":"#ffffff",
+            "circle-stroke-width":2
+        }
+    });
+
+    map.addLayer({
+        id:"parking-public-label",
+        type:"symbol",
+        source:"parking-public",
+        minzoom:11,
+        layout:{
+            "text-field":"P",
+            "text-size":["interpolate",["linear"],["zoom"], 11,9, 18,15],
+            "text-font":["Noto Sans Bold"]
+        },
+        paint:{ "text-color":"#ffffff" }
+    });
+}
+
+/* ==========================================================
+   Popups
+   ========================================================== */
+
+function bindPopups(){
+
+    ["stationnement-line","stationnement-dash-payant-illimite","motos-highlight"].forEach(layerId=>{
+
+        map.on("mouseenter",layerId,()=>{ map.getCanvas().style.cursor="pointer"; });
+        map.on("mouseleave",layerId,()=>{ map.getCanvas().style.cursor=""; });
+
+        map.on("click",layerId,e=>{
+
+            if(!e.features || !e.features.length) return;
+
+            const props = e.features[0].properties;
+            const type = props.TYPE_STATIONNEMENT || "—";
+            const color = typeColorForPopup(type);
+
+            const rows = [];
+
+            if(props.NOM_RUES)
+                rows.push("<tr><td class=\"label\">Rue</td><td>"+props.NOM_RUES+"</td></tr>");
+
+            rows.push(
+                "<tr><td class=\"label\">Type</td><td>"+
+                "<span class=\"parking-swatch\" style=\"background:"+color+"\"></span>"+type+"</td></tr>"
+            );
+
+            if(props.NOMBRE_PLACES!=null)
+                rows.push("<tr><td class=\"label\">Places</td><td>"+props.NOMBRE_PLACES+"</td></tr>");
+
+            if(props.NOMBRE_ARCEAUX!=null)
+                rows.push("<tr><td class=\"label\">Arceaux</td><td>"+props.NOMBRE_ARCEAUX+"</td></tr>");
+
+            if(props.TYPE_SUPPORT)
+                rows.push("<tr><td class=\"label\">Support</td><td>"+props.TYPE_SUPPORT+"</td></tr>");
+
+            openPopup(
+                e.lngLat,
+                "<div class=\"parking-popup\"><h3>Stationnement</h3><table>"+rows.join("")+"</table></div>"
+            );
         });
-        bounds_group.addLayer(layer_OTC_STATIONNEMENT_V_PUBLIQUE_1);
-        map.addLayer(layer_OTC_STATIONNEMENT_V_PUBLIQUE_1);
-        var osmGeocoder = new L.Control.Geocoder({
-            collapsed: true,
-            position: 'topleft',
-            text: 'Search',
-            title: 'Testing'
-        }).addTo(map);
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .className += ' fa fa-search';
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .title += 'Search for a place';
-        var overlaysTree = [
-            {label: 'OTC_STATIONNEMENT_V_PUBLIQUE<br /><table><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit30min0.png" /></td><td>Gratuit 30 min</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit60min1.png" /></td><td>Gratuit 60 min</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit120min2.png" /></td><td>Gratuit 120 min</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit180min3.png" /></td><td>Gratuit 180 min</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit240min4.png" /></td><td>Gratuit 240 min</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuit15heures5.png" /></td><td>Gratuit 15 heures</td></tr><tr><td style="text-align: center;"><img src="legend/OTC_STATIONNEMENT_V_PUBLIQUE_1_Gratuitillimité6.png" /></td><td>Gratuit illimité</td></tr></table>', layer: layer_OTC_STATIONNEMENT_V_PUBLIQUE_1},
-            {label: "Fond plan black white", layer: layer_Fondplanblackwhite_0, radioGroup: 'bm' },]
-        var lay = L.control.layers.tree(null, overlaysTree,{
-            //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
-            //collapseAll: 'Collapse all',
-            //expandAll: 'Expand all',
-            collapsed: true,
+    });
+
+    map.on("mouseenter","parking-public-circle",()=>{ map.getCanvas().style.cursor="pointer"; });
+    map.on("mouseleave","parking-public-circle",()=>{ map.getCanvas().style.cursor=""; });
+
+    map.on("click","parking-public-circle",e=>{
+
+        if(!e.features || !e.features.length) return;
+
+        const p = e.features[0].properties;
+        const rows = [];
+
+        if(p.VOCATION) rows.push("<tr><td class=\"label\">Vocation</td><td>"+p.VOCATION+"</td></tr>");
+        if(p.NB_PL_PUBLIQUES!=null) rows.push("<tr><td class=\"label\">Places publiques</td><td>"+p.NB_PL_PUBLIQUES+"</td></tr>");
+        if(p.NB_PL_HANDICAPE) rows.push("<tr><td class=\"label\">Dont handicapé</td><td>"+p.NB_PL_HANDICAPE+"</td></tr>");
+        if(p.NB_PL_MOBILITY) rows.push("<tr><td class=\"label\">Dont Mobility</td><td>"+p.NB_PL_MOBILITY+"</td></tr>");
+        if(p.NB_PL_ELECTRIQUE) rows.push("<tr><td class=\"label\">Dont électrique</td><td>"+p.NB_PL_ELECTRIQUE+"</td></tr>");
+        if(p.INT_EXT) rows.push("<tr><td class=\"label\">Type</td><td>"+p.INT_EXT+"</td></tr>");
+
+        if(p.LIEN_WWW)
+            rows.push(
+                "<tr><td class=\"label\">Site</td><td><a href=\""+p.LIEN_WWW+"\" target=\"_blank\" rel=\"noopener\">en savoir plus</a></td></tr>"
+            );
+
+        openPopup(
+            e.lngLat,
+            "<div class=\"parking-popup\"><h3>🅿️ "+(p.NOM||"Parking")+"</h3><table>"+rows.join("")+"</table></div>"
+        );
+    });
+}
+
+/* ==========================================================
+   Panneau + toggles
+   ========================================================== */
+
+function bindLegendPanel(){
+
+    const toggle = document.getElementById("legend-toggle");
+    const panel = document.getElementById("legend-panel");
+
+    toggle.addEventListener("click",()=>panel.classList.toggle("hidden"));
+
+    if(window.innerWidth>900)
+        panel.classList.remove("hidden");
+
+    document.getElementById("chk-motos").addEventListener("change",e=>{
+
+        if(map.getLayer("motos-highlight"))
+            map.setLayoutProperty("motos-highlight","visibility",e.target.checked?"visible":"none");
+    });
+
+    document.getElementById("chk-parking").addEventListener("change",e=>{
+
+        ["parking-public-circle","parking-public-label"].forEach(id=>{
+
+            if(map.getLayer(id))
+                map.setLayoutProperty(id,"visibility",e.target.checked?"visible":"none");
         });
-        lay.addTo(map);
-        setBounds();
-        </script>
-    </body>
+    });
+}
+
+/* ==========================================================
+   Initialisation
+   ========================================================== */
+
+map.on("load",()=>{
+
+    addAllSourcesAndLayers();
+    bindPopups();
+    bindLegendPanel();
+
+    loadStationnement();
+    loadParkingPublic();
+});
+
+map.on("moveend",loadStationnement);
+
+</script>
+
+</body>
 </html>
