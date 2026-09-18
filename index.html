@@ -9,23 +9,23 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
 >
 
-<title>GVA FREEPARK</title>
+<title>GVA FreePark</title>
 
 <link
     rel="icon"
     type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23526e65'/%3E%3Ctext x='32' y='44' font-family='Arial,Helvetica,sans-serif' font-weight='bold' font-size='36' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='white' stroke='%23111' stroke-width='4'/%3E%3Ctext x='32' y='44' font-family='Arial,Helvetica,sans-serif' font-weight='bold' font-size='34' fill='%23111' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E"
 >
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Stationnement Genève">
+<meta name="apple-mobile-web-app-title" content="GVA FreePark">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#526e65">
+<meta name="theme-color" content="#ffffff">
 
 <link
     rel="manifest"
-    href="data:application/manifest+json,%7B%22name%22%3A%22Stationnement%20-%20Gen%C3%A8ve%22%2C%22short_name%22%3A%22Stationnement%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%23e8eeeb%22%2C%22theme_color%22%3A%22%23526e65%22%7D"
+    href="data:application/manifest+json,%7B%22name%22%3A%22GVA%20FreePark%22%2C%22short_name%22%3A%22FreePark%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22any%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23ffffff%22%7D"
 >
 
 <link
@@ -35,13 +35,72 @@
 
 <style>
 
+*{ box-sizing:border-box; }
+
 html,body{
     margin:0;
     padding:0;
     width:100%;
     height:100%;
-    overflow:hidden;
     font-family:Arial,Helvetica,sans-serif;
+    background:#e9e9e9;
+    color:#111;
+}
+
+.app{
+    max-width:520px;
+    margin:0 auto;
+    height:100dvh;
+    height:100vh;
+    background:#ffffff;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    overflow:hidden;
+}
+
+@media(min-width:560px){
+
+    .app{
+        border-left:2px solid #111;
+        border-right:2px solid #111;
+        box-shadow:0 10px 50px rgba(0,0,0,.12);
+    }
+}
+
+/* ---------- en-tête / logo ---------- */
+
+.app-header{
+    flex:0 0 auto;
+    padding:16px 24px 12px;
+    border-bottom:2px solid #111;
+    display:flex;
+    justify-content:center;
+    background:#fff;
+}
+
+.app-header svg{
+    width:100%;
+    max-width:300px;
+    height:auto;
+    display:block;
+}
+
+/* ---------- carte encadrée en tirets ---------- */
+
+.map-wrap{
+    flex:1 1 auto;
+    position:relative;
+    min-height:0;
+}
+
+.map-frame{
+    position:absolute;
+    inset:14px;
+    border:2px dashed #111;
+    border-radius:20px;
+    overflow:hidden;
+    background:#fff;
 }
 
 #map{
@@ -51,191 +110,125 @@ html,body{
     height:100%;
 }
 
-:root{
-    --brand:rgb(82,110,101);
-    --brand-light:#e8eeeb;
-    --location-blue:#007aff;
+/* ---------- pied / bouton calques ---------- */
 
-    --neon-green:#7ed321;
-    --neon-green-glow:rgba(126,211,33,.75);
-    --neon-orange:#f5821f;
-    --dark-bg:#0b0b0b;
-    --dark-panel:#141414;
+.app-footer{
+    flex:0 0 auto;
+    border-top:2px solid #111;
+    display:flex;
+    justify-content:center;
+    padding:10px 16px;
+    background:#fff;
 }
 
-.block-card{
-    background:#ffffff;
-    border:2px solid var(--brand);
-    border-radius:22px;
-    box-shadow:
-        5px 5px 0 rgba(82,110,101,.18),
-        0 10px 30px rgba(0,0,0,.15);
-}
-
-/* ---------- titre ---------- */
-
-#title-panel{
-    position:absolute;
-    top:10px;
-    left:10px;
-    z-index:40;
-    background:none;
-    border:none;
-    box-shadow:none;
-    padding:0;
-    pointer-events:none;
-    max-width:calc(100vw - 70px);
-    box-sizing:border-box;
-}
-
-#title-panel h1{
-    margin:0;
-    font-family:"Arial Black","Arial Narrow Bold",Impact,Haettenschweiler,sans-serif;
-    font-weight:900;
-    font-style:italic;
-    font-size:26px;
-    line-height:1;
-    letter-spacing:.5px;
-    text-transform:uppercase;
-    white-space:nowrap;
-    transform:skewX(-8deg);
-    transform-origin:left center;
-    color:var(--neon-green);
-    -webkit-text-stroke:1.2px var(--neon-orange);
-    text-stroke:1.2px var(--neon-orange);
-    text-shadow:
-        0 0 4px var(--neon-green-glow),
-        0 0 12px var(--neon-green-glow),
-        0 0 26px rgba(126,211,33,.55),
-        0 0 46px rgba(126,211,33,.35);
-}
-
-@media(min-width:700px){
-
-    #title-panel h1{ font-size:46px; letter-spacing:1px; }
-}
-
-@media(min-width:1100px){
-
-    #title-panel h1{ font-size:58px; }
-}
-
-/* ---------- bouton légende ---------- */
-
-#legend-toggle{
-    position:absolute;
-    z-index:41;
-    top:10px;
-    right:10px;
-    width:46px;
-    height:46px;
+.layers-btn{
     display:flex;
     align-items:center;
-    justify-content:center;
-    background:var(--dark-bg);
-    border:2px solid var(--neon-green);
-    border-radius:14px;
-    box-shadow:
-        0 0 6px var(--neon-green-glow),
-        0 0 16px rgba(126,211,33,.45),
-        inset 0 0 8px rgba(126,211,33,.25);
+    gap:9px;
+    background:#fff;
+    border:2px solid #111;
+    border-radius:999px;
+    padding:9px 20px;
+    font-weight:bold;
+    font-size:14px;
+    color:#111;
     cursor:pointer;
-    font-family:"Arial Black",Impact,sans-serif;
-    font-weight:900;
-    font-size:19px;
-    color:var(--neon-green);
-    text-shadow:0 0 6px var(--neon-green-glow),0 0 14px rgba(126,211,33,.6);
-    user-select:none;
     -webkit-tap-highlight-color:transparent;
-    transition:box-shadow .15s ease,transform .1s ease;
 }
 
-#legend-toggle:hover{
-    box-shadow:
-        0 0 10px var(--neon-green-glow),
-        0 0 26px rgba(126,211,33,.6),
-        inset 0 0 10px rgba(126,211,33,.35);
+.layers-btn:active{ transform:translateY(1px); }
+
+.layers-btn svg{
+    width:18px;
+    height:18px;
+    flex:0 0 auto;
 }
 
-#legend-toggle:active{ transform:translate(1px,1px); }
+/* ---------- panneau "calques" (bottom sheet) ---------- */
 
-/* ---------- panneau légende ---------- */
-
-#legend-panel{
+.sheet-backdrop{
     position:absolute;
-    z-index:41;
-    top:64px;
-    right:10px;
-    width:260px;
-    max-width:calc(100vw - 20px);
-    max-height:calc(100vh - 90px);
-    overflow-y:auto;
-    padding:14px 14px 12px;
-    box-sizing:border-box;
-    font-size:12.5px;
-    color:#ddd;
-    background:var(--dark-panel);
-    border:2px solid var(--neon-green);
-    border-radius:16px;
-    box-shadow:
-        0 0 10px var(--neon-green-glow),
-        0 0 26px rgba(126,211,33,.35),
-        0 8px 24px rgba(0,0,0,.5);
-    transition:opacity .2s ease,transform .2s ease;
-}
-
-#legend-panel.hidden{
+    inset:0;
+    background:rgba(0,0,0,.25);
+    z-index:60;
     opacity:0;
     pointer-events:none;
-    transform:translateY(-6px);
+    transition:opacity .2s ease;
 }
 
-#legend-panel h2{
+.sheet-backdrop.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.sheet{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:61;
+    background:#fff;
+    border-top:2px solid #111;
+    border-radius:20px 20px 0 0;
+    max-height:78%;
+    overflow-y:auto;
+    padding:10px 22px 22px;
+    transform:translateY(100%);
+    transition:transform .25s ease;
+}
+
+.sheet.open{ transform:translateY(0); }
+
+.sheet-handle{
+    width:38px;
+    height:4px;
+    background:#111;
+    opacity:.25;
+    border-radius:2px;
+    margin:8px auto 14px;
+}
+
+.sheet h2{
     margin:0 0 4px;
-    font-size:14px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:.03em;
-    color:var(--neon-green);
-    text-shadow:0 0 6px var(--neon-green-glow);
-}
-
-#legend-panel .subtitle{
-    margin:0 0 10px;
     font-size:11px;
-    color:#999;
-}
-
-.legend-section{
-    margin-bottom:12px;
-    padding-bottom:10px;
-    border-bottom:1px solid #2a2a2a;
-}
-
-.legend-section:last-child{
-    border-bottom:none;
-    margin-bottom:0;
-    padding-bottom:0;
-}
-
-.legend-section h3{
-    margin:0 0 6px;
-    font-size:10.5px;
     text-transform:uppercase;
-    letter-spacing:.03em;
-    color:var(--neon-orange);
+    letter-spacing:.06em;
+    color:#777;
+}
+
+.sheet .section{
+    margin-bottom:18px;
+}
+
+.option-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 0;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    font-size:14.5px;
+    font-weight:bold;
+}
+
+.option-row input{
+    width:17px;
+    height:17px;
+    accent-color:#111;
+    cursor:pointer;
 }
 
 .legend-row{
     display:flex;
     align-items:center;
     gap:9px;
-    padding:3px 0;
+    padding:2px 0;
+    font-size:12.5px;
 }
 
 .legend-swatch{
     flex:0 0 auto;
-    width:26px;
+    width:24px;
     height:6px;
     border-radius:3px;
 }
@@ -247,103 +240,50 @@ html,body{
     background-color:transparent;
 }
 
-.legend-swatch.glow{
-    box-shadow:0 0 6px 2px rgba(216,30,44,.55);
-}
-
-.legend-swatch.thick{ height:8px; }
-.legend-swatch.dim{ opacity:.55; }
-
-/* checkbox rows (motos / parkings) */
-
-.layer-row{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    cursor:pointer;
-    user-select:none;
-    -webkit-tap-highlight-color:transparent;
-    padding:4px 0;
-}
-
-.layer-row input[type="checkbox"]{
-    width:16px;
-    height:16px;
-    flex:0 0 auto;
-    accent-color:var(--neon-green);
-    cursor:pointer;
-}
-
-.layer-row .dot{
-    flex:0 0 auto;
-    width:13px;
-    height:13px;
+.legend-swatch.dot{
+    width:12px;
+    height:12px;
     border-radius:50%;
-    border:1.5px solid rgba(255,255,255,.25);
 }
 
-.layer-row span.txt{
-    font-weight:bold;
-    color:#eee;
-    font-size:13px;
-}
+/* ---------- indicateur de zoom / chargement ---------- */
 
-/* ---------- indicateur de zoom ---------- */
-
-#zoom-hint{
+.pill{
     position:absolute;
-    z-index:39;
     left:50%;
-    bottom:26px;
     transform:translateX(-50%);
-    background:var(--dark-bg);
-    border:2px solid var(--neon-orange);
-    border-radius:999px;
-    padding:9px 18px;
-    font-size:13px;
-    font-weight:bold;
-    color:var(--neon-orange);
-    text-shadow:0 0 8px rgba(245,130,31,.7);
-    box-shadow:0 0 10px rgba(245,130,31,.5),0 0 22px rgba(245,130,31,.3);
-    white-space:nowrap;
-    transition:opacity .2s ease;
-}
-
-#zoom-hint.hidden{
-    opacity:0;
-    pointer-events:none;
-}
-
-/* ---------- indicateur de chargement ---------- */
-
-#loading-indicator{
-    position:absolute;
-    z-index:39;
-    left:50%;
-    top:14px;
-    transform:translateX(-50%);
-    background:var(--dark-bg);
-    color:var(--neon-green);
-    border:2px solid var(--neon-green);
+    background:#fff;
+    border:2px solid #111;
     border-radius:999px;
     padding:7px 16px;
     font-size:12.5px;
     font-weight:bold;
-    text-shadow:0 0 6px var(--neon-green-glow);
-    box-shadow:0 0 8px var(--neon-green-glow),0 0 18px rgba(126,211,33,.4);
-    opacity:0;
+    white-space:nowrap;
+    z-index:30;
     transition:opacity .2s ease;
+}
+
+#zoom-hint{ bottom:28px; }
+
+#loading-indicator{
+    top:26px;
+    background:#111;
+    color:#fff;
+    border-color:#111;
+    opacity:0;
     pointer-events:none;
 }
 
 #loading-indicator.visible{ opacity:1; }
 
+.hidden{ opacity:0; pointer-events:none; }
+
 /* ---------- popup ---------- */
 
 .maplibregl-popup-content{
     border-radius:14px!important;
-    border:2px solid var(--neon-green);
-    box-shadow:0 0 8px var(--neon-green-glow),0 4px 16px rgba(0,0,0,.25)!important;
+    border:2px solid #111;
+    box-shadow:3px 3px 0 rgba(0,0,0,.12)!important;
     padding:12px 14px!important;
     font-family:Arial,Helvetica,sans-serif;
 }
@@ -351,7 +291,7 @@ html,body{
 .parking-popup h3{
     margin:0 0 6px;
     font-size:14.5px;
-    color:var(--brand);
+    color:#111;
 }
 
 .parking-popup table{
@@ -362,7 +302,7 @@ html,body{
 
 .parking-popup td{ padding:2px 0; vertical-align:top; }
 .parking-popup td.label{ color:#888; padding-right:10px; white-space:nowrap; }
-.parking-popup a{ color:var(--brand); font-weight:bold; }
+.parking-popup a{ color:#111; font-weight:bold; }
 
 .parking-swatch{
     display:inline-block;
@@ -375,41 +315,16 @@ html,body{
 
 /* ---------- contrôles maplibre ---------- */
 
-.maplibregl-ctrl-top-right{
-    top:auto!important;
-    bottom:10px!important;
-    right:10px!important;
-}
-
 .maplibregl-ctrl-group{
-    border-radius:14px!important;
+    border-radius:12px!important;
     overflow:hidden;
-    border:2px solid var(--neon-green)!important;
-    box-shadow:
-        0 0 8px var(--neon-green-glow),
-        0 0 18px rgba(126,211,33,.4)!important;
-    background:var(--dark-bg)!important;
+    border:2px solid #111!important;
+    box-shadow:2px 2px 0 rgba(0,0,0,.12)!important;
 }
 
-.maplibregl-ctrl-group button{
-    background:var(--dark-bg)!important;
-}
-
-.maplibregl-ctrl-group button+button{
-    border-top:1px solid rgba(126,211,33,.35)!important;
-}
-
-.maplibregl-ctrl-icon{
-    filter:invert(1) brightness(1.4) drop-shadow(0 0 3px var(--neon-green-glow));
-}
-
-.maplibregl-ctrl-group button:hover{
-    background:#1a1a1a!important;
-}
-
-@media(max-width:700px){
-
-    #legend-panel{ width:230px; font-size:12px; }
+.maplibregl-ctrl-bottom-right{
+    right:8px!important;
+    bottom:8px!important;
 }
 
 </style>
@@ -417,64 +332,141 @@ html,body{
 </head>
 <body>
 
-<div id="map"></div>
+<div class="app">
 
-<div id="title-panel">
-    <h1>GVA FREEPARK</h1>
+    <header class="app-header">
+        <svg viewBox="84 378 250 34" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GVA FreePark">
+            <defs>
+                <style>
+                    .logo-cls-1, .logo-cls-2, .logo-cls-3, .logo-cls-4, .logo-cls-5, .logo-cls-6, .logo-cls-7 {
+                        fill: none;
+                        stroke: #111111;
+                        stroke-linecap: round;
+                        stroke-linejoin: round;
+                    }
+                    .logo-cls-6 { stroke-width: .55px; }
+                    .logo-cls-1 { stroke-width: .6px; }
+                    .logo-cls-2, .logo-cls-3, .logo-cls-4, .logo-cls-5, .logo-cls-7 {
+                        stroke-width: .5px;
+                        stroke-dasharray: 1.6 1.4;
+                    }
+                    .logo-cls-8 { fill: #111111; }
+                </style>
+            </defs>
+            <path class="logo-cls-6" d="M104.33,404.1c-.72.99-1.57,1.7-2.54,2.12-.97.42-1.98.64-3.04.64-3.14,0-5.56-.84-7.27-2.51-1.71-1.67-2.56-4.09-2.56-7.25,0-1.8.28-3.5.84-5.11.56-1.61,1.36-3.03,2.4-4.26,1.04-1.23,2.31-2.21,3.81-2.93,1.5-.72,3.18-1.08,5.04-1.08,1.3,0,2.52.16,3.66.47,1.14.31,2.13.79,2.98,1.43.85.64,1.52,1.45,2.02,2.43.5.98.74,2.15.74,3.52h-4.87c-.06-1.36-.49-2.33-1.27-2.9-.79-.57-1.86-.85-3.22-.85-1.24,0-2.32.28-3.24.85s-1.67,1.3-2.26,2.2c-.59.9-1.03,1.9-1.32,3.01-.29,1.11-.43,2.19-.43,3.24,0,.76.1,1.49.29,2.17.2.68.5,1.29.9,1.81.4.53.92.95,1.55,1.26.63.31,1.39.46,2.28.46s1.73-.12,2.4-.36c.67-.24,1.25-.56,1.74-.98.49-.41.89-.91,1.21-1.5.32-.59.58-1.23.79-1.94h-5.11l.77-3.63h9.39l-2.54,11.97h-3.07v-2.26h-.06Z"/>
+            <path class="logo-cls-6" d="M116.08,406.36l-2.54-22.13M121.57,406.36h-5.49M133.38,384.22l-11.81,22.13M118.4,384.22l1.46,16.62h.06l8.4-16.62M118.4,384.22l1.46,16.62h.06l8.4-16.62"/>
+            <path class="logo-cls-6" d="M143.95,406.36l-.71-4.93h-8.28l-2.79,4.93M145.09,384.22l3.69,22.13M140.1,384.22h4.99M127.05,406.36l13.05-22.13M142.8,397.8l-1.08-8.8h-.06l-4.77,8.8h5.92Z"/>
+            <path class="logo-cls-6" d="M164,406.36h-4.84M175.41,397.21h-9.46l-1.95,9.15M176.22,393.43l-.81,3.78M178.67,388.32h-10.85l-1.08,5.12h9.49M179.57,384.22l-.9,4.09M159.17,406.36l4.65-22.13h15.75"/>
+            <path class="logo-cls-6" d="M182.39,406.36h-4.84M191.97,406.36c-.06-.27-.11-.52-.15-.76-.04-.24-.06-.48-.06-.73,0-.74.04-1.49.12-2.25.08-.75.12-1.5.12-2.25,0-.54-.08-.98-.23-1.32-.16-.34-.37-.61-.65-.82-.28-.21-.62-.35-1.01-.42-.39-.07-.83-.11-1.3-.11h-4.59l-1.83,8.65M196.71,406.36h-4.74M177.55,406.36l4.62-22.13h10.57c.99-.02,1.9.07,2.71.26.82.2,1.51.53,2.09.99s1.02,1.07,1.33,1.81.47,1.65.47,2.73c0,.74-.12,1.46-.37,2.14-.25.68-.6,1.29-1.05,1.81-.45.53-.99.97-1.61,1.32-.62.35-1.3.58-2.05.68v.06c.91.29,1.52.79,1.83,1.5.31.71.47,1.51.47,2.4,0,.5-.03,1.09-.08,1.78-.05.69-.08,1.38-.08,2.06,0,.5.02.97.06,1.41.04.44.12.83.25,1.16M189.46,394.24c.66,0,1.29-.07,1.89-.2.6-.13,1.13-.34,1.6-.62.47-.28.84-.64,1.12-1.08s.42-.98.42-1.6-.1-1.08-.29-1.44c-.2-.36-.46-.64-.79-.82-.33-.19-.71-.31-1.15-.37s-.89-.09-1.36-.09h-4.62l-1.3,6.23h4.5Z"/>
+            <path class="logo-cls-6" d="M216.98,406.36h-17.05l4.62-22.13h16.9M217.85,402.27l-.87,4.09M217.91,396.84h-11.13l-1.15,5.43h12.21M218.72,393.06l-.81,3.78M220.61,388.32h-12.03l-.99,4.74h11.13M221.45,384.22l-.84,4.09"/>
+            <path class="logo-cls-6" d="M238.53,402.27l-.87,4.09M238.59,396.84h-11.13l-1.15,5.43h12.21M239.4,393.06l-.81,3.78M241.29,388.32h-12.03l-.99,4.74h11.13M242.12,384.22l-.84,4.09M237.66,406.36h-17.05l4.62-22.13h16.9"/>
+            <path class="logo-cls-6" d="M246.12,406.36h-4.84M241.29,406.36l4.59-22.13h8.87c1.12,0,2.14.11,3.08.33.94.22,1.75.57,2.43,1.07.68.5,1.21,1.16,1.6,1.98.38.83.57,1.85.57,3.07s-.23,2.31-.7,3.27-1.1,1.77-1.89,2.43c-.8.66-1.71,1.17-2.74,1.52-1.03.35-2.13.53-3.29.53h-6.01l-1.67,7.94M253.56,394.64c1.24,0,2.22-.31,2.93-.95.71-.63,1.07-1.61,1.07-2.93,0-.56-.1-1.02-.29-1.38-.2-.36-.46-.64-.79-.84-.33-.2-.7-.34-1.1-.42-.4-.08-.82-.12-1.26-.12h-4.15l-1.36,6.63h4.96Z"/>
+            <path class="logo-cls-6" d="M262.52,406.36h-5.11M274.3,406.36l-.71-4.93h-8.28l-2.79,4.93M279.14,406.36h-4.84M257.41,406.36l13.05-22.13h4.99l3.69,22.13M273.15,397.8l-1.08-8.8h-.06l-4.77,8.8h5.92Z"/>
+            <path class="logo-cls-6" d="M285.74,406.36h-4.84M280.9,406.36l4.62-22.13h10.57c.99-.02,1.9.07,2.71.26.82.2,1.51.53,2.09.99.58.46,1.02,1.07,1.33,1.81.31.74.46,1.65.46,2.73,0,.74-.12,1.46-.37,2.14-.25.68-.6,1.29-1.05,1.81-.46.53-.99.97-1.61,1.32-.62.35-1.3.58-2.05.68v.06c.91.29,1.52.79,1.83,1.5.31.71.47,1.51.47,2.4,0,.5-.03,1.09-.08,1.78-.05.69-.08,1.38-.08,2.06,0,.5.02.97.06,1.41.04.44.12.83.25,1.16h-4.74c-.06-.27-.11-.52-.15-.76-.04-.24-.06-.48-.06-.73,0-.74.04-1.49.12-2.25.08-.75.12-1.5.12-2.25,0-.54-.08-.98-.23-1.32-.16-.34-.37-.61-.65-.82-.28-.21-.62-.35-1.01-.42-.39-.07-.83-.11-1.3-.11h-4.59l-1.83,8.65M292.81,394.24c.66,0,1.29-.07,1.89-.2.6-.13,1.13-.34,1.6-.62.47-.28.84-.64,1.12-1.08s.42-.98.42-1.6-.1-1.08-.29-1.44c-.2-.36-.46-.64-.79-.82-.33-.19-.71-.31-1.15-.37s-.89-.09-1.36-.09h-4.62l-1.3,6.23h4.5Z"/>
+            <path class="logo-cls-6" d="M308.15,406.36h-4.87M318.04,406.36l-5.05-9.95-3.38,2.95-1.46,7.01M321.16,406.36h-3.11M323.53,406.36h-2.37M327.37,384.22l-10.63,9.11,6.79,13.02M320.92,384.22h6.45M312.74,384.22l-1.92,9.27h.06l10.04-9.27M307.87,384.22h4.87M303.29,406.36l4.59-22.13"/>
+            <g>
+                <line class="logo-cls-6" x1="116.08" y1="384.22" x2="116.14" y2="384.72"/>
+                <line class="logo-cls-4" x1="116.25" y1="385.7" x2="118.29" y2="402.91"/>
+                <polyline class="logo-cls-6" points="118.34 403.4 118.4 403.89 118.9 403.89"/>
+                <polyline class="logo-cls-6" points="119.86 403.89 120.36 403.89 120.59 403.45"/>
+                <line class="logo-cls-3" x1="121.06" y1="402.56" x2="130.19" y2="385.11"/>
+                <line class="logo-cls-6" x1="130.43" y1="384.67" x2="130.66" y2="384.22"/>
+            </g>
+            <g>
+                <line class="logo-cls-6" x1="129.46" y1="406.36" x2="129.7" y2="405.92"/>
+                <line class="logo-cls-5" x1="130.17" y1="405.09" x2="140.25" y2="387.12"/>
+                <polyline class="logo-cls-6" points="140.49 386.71 140.73 386.27 141.23 386.27"/>
+                <polyline class="logo-cls-6" points="142.3 386.27 142.8 386.27 142.88 386.76"/>
+                <line class="logo-cls-2" x1="143.04" y1="387.77" x2="145.83" y2="405.36"/>
+                <line class="logo-cls-6" x1="145.91" y1="405.86" x2="145.99" y2="406.36"/>
+            </g>
+            <polygon class="logo-cls-8" points="133.15 384.64 130.44 384.64 130.66 384.22 133.38 384.22 133.15 384.64"/>
+            <line class="logo-cls-1" x1="133.38" y1="399.38" x2="144.89" y2="399.42"/>
+            <line class="logo-cls-7" x1="133.58" y1="399.73" x2="145.09" y2="399.73"/>
+        </svg>
+    </header>
+
+    <div class="map-wrap">
+
+        <div class="map-frame">
+            <div id="map"></div>
+        </div>
+
+        <div id="zoom-hint" class="pill hidden">Zoomez pour voir le stationnement</div>
+        <div id="loading-indicator" class="pill">Chargement…</div>
+
+    </div>
+
+    <footer class="app-footer">
+        <button class="layers-btn" id="layers-toggle" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+            </svg>
+            Calques
+        </button>
+    </footer>
+
+    <div class="sheet-backdrop" id="sheet-backdrop"></div>
+
+    <div class="sheet" id="layers-sheet">
+        <div class="sheet-handle"></div>
+
+        <div class="section">
+            <h2>Fond de carte</h2>
+            <label class="option-row">
+                <input type="radio" name="basemap" value="positron" checked>
+                Plan
+            </label>
+            <label class="option-row">
+                <input type="radio" name="basemap" value="relief">
+                Relief (DEM)
+            </label>
+        </div>
+
+        <div class="section">
+            <h2>Stationnement — durée</h2>
+            <div class="legend-row"><span class="legend-swatch" style="background:#c8d6e5"></span>Courte (30–60 min)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#4f8fc7"></span>Moyenne (90–120 min)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#f4a93c"></span>Longue (180–240 min)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#e8632a"></span>Très longue (15 h)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#d81e2c"></span><b>Illimitée / résident</b></div>
+            <div class="legend-row"><span class="legend-swatch dashed"></span>Illimitée payante</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#b8b8b8"></span>Zones spéciales / réservées</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:#5a5a5a"></span>Interdit</div>
+        </div>
+
+        <div class="section">
+            <h2>Autres couches</h2>
+            <label class="option-row">
+                <input type="checkbox" id="chk-motos" checked>
+                <span class="legend-swatch dot" style="background:#8b5cf6"></span>
+                Cases motos
+            </label>
+            <label class="option-row">
+                <input type="checkbox" id="chk-parking" checked>
+                <span class="legend-swatch dot" style="background:#111"></span>
+                Parkings publics
+            </label>
+        </div>
+    </div>
+
 </div>
-
-<div id="legend-toggle" title="Afficher / masquer la légende">P</div>
-
-<div id="legend-panel" class="hidden">
-    <h2>Légende</h2>
-    <p class="subtitle">Plus la couleur est intense, plus la durée est longue.</p>
-
-    <div class="legend-section">
-        <h3>Durée de stationnement</h3>
-        <div class="legend-row"><span class="legend-swatch" style="background:#c8d6e5"></span>Courte (30–60 min)</div>
-        <div class="legend-row"><span class="legend-swatch" style="background:#4f8fc7"></span>Moyenne (90–120 min)</div>
-        <div class="legend-row"><span class="legend-swatch" style="background:#f4a93c"></span>Longue (180–240 min)</div>
-        <div class="legend-row"><span class="legend-swatch" style="background:#e8632a"></span>Très longue (15 heures)</div>
-        <div class="legend-row"><span class="legend-swatch glow" style="background:#d81e2c"></span><b>Illimitée / résident</b></div>
-        <div class="legend-row"><span class="legend-swatch dashed"></span>Illimitée payante</div>
-    </div>
-
-    <div class="legend-section">
-        <h3>Autres marquages</h3>
-        <div class="legend-row"><span class="legend-swatch dim" style="background:#b8b8b8"></span>Zones spéciales / réservées</div>
-        <div class="legend-row"><span class="legend-swatch thick" style="background:#5a5a5a"></span>Stationnement interdit</div>
-    </div>
-
-    <div class="legend-section">
-        <label class="layer-row">
-            <input type="checkbox" id="chk-motos" checked>
-            <span class="dot" style="background:#8b5cf6"></span>
-            <span class="txt">Mettre en évidence les cases motos</span>
-        </label>
-    </div>
-
-    <div class="legend-section">
-        <label class="layer-row">
-            <input type="checkbox" id="chk-parking" checked>
-            <span class="dot" style="background:#3a5f52"></span>
-            <span class="txt">Parkings publics</span>
-        </label>
-    </div>
-</div>
-
-<div id="zoom-hint" class="hidden">Zoomez pour voir le stationnement</div>
-<div id="loading-indicator">Chargement…</div>
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
 
 <script>
 
 /* ==========================================================
-   Fond de plan — repris de Mappes sardes (OpenFreeMap Positron)
+   Fonds de carte — Positron (OpenFreeMap) + relief DEM (Mappes sardes)
    ========================================================== */
 
 const OPENFREEMAP_STYLE =
     "https://tiles.openfreemap.org/styles/positron";
+
+const TERRAIN_DEM_URL =
+    "https://tiles.mapterhorn.com/tilejson.json";
 
 /* ==========================================================
    Services SITG
@@ -486,9 +478,10 @@ const SITG_STATIONNEMENT_URL =
 const SITG_PARKING_URL =
     "https://vector.sitg.ge.ch/arcgis/rest/services/OTC_PARKING/MapServer/0/query";
 
-const STATIONNEMENT_MIN_ZOOM = 15;
-const MAX_BOUNDS_WIDTH = 0.2;
-const MAX_BOUNDS_HEIGHT = 0.2;
+/* seuil abaissé + zoom initial plus proche : tout est lisible dès l'ouverture */
+const STATIONNEMENT_MIN_ZOOM = 14;
+const MAX_BOUNDS_WIDTH = 0.3;
+const MAX_BOUNDS_HEIGHT = 0.3;
 
 const map =
     new maplibregl.Map({
@@ -501,35 +494,30 @@ const map =
 
         zoom:
             window.innerWidth<=600
-            ? 13.5
-            : 14.5,
+            ? 14.6
+            : 15.2,
 
         attributionControl:{
             compact:true
         }
     });
 
-map.addControl(
-    new maplibregl.NavigationControl(),
-    "top-right"
-);
+map.addControl(new maplibregl.NavigationControl(),"bottom-right");
 
-/* géolocalisation */
 map.addControl(
     new maplibregl.GeolocateControl({
         positionOptions:{enableHighAccuracy:true},
         trackUserLocation:true,
         showUserHeading:true
     }),
-    "top-right"
+    "bottom-right"
 );
 
 let activePopup = null;
 
 function openPopup(lngLat,html){
 
-    if(activePopup)
-        activePopup.remove();
+    if(activePopup) activePopup.remove();
 
     activePopup =
         new maplibregl.Popup({maxWidth:"270px"})
@@ -546,10 +534,8 @@ function getCurrentBounds(){
     const b = map.getBounds();
 
     return {
-        xmin:b.getWest(),
-        ymin:b.getSouth(),
-        xmax:b.getEast(),
-        ymax:b.getNorth(),
+        xmin:b.getWest(), ymin:b.getSouth(),
+        xmax:b.getEast(), ymax:b.getNorth(),
         width:b.getEast()-b.getWest(),
         height:b.getNorth()-b.getSouth()
     };
@@ -558,10 +544,8 @@ function getCurrentBounds(){
 function getBoundsKey(bounds){
 
     return [
-        bounds.xmin.toFixed(3),
-        bounds.ymin.toFixed(3),
-        bounds.xmax.toFixed(3),
-        bounds.ymax.toFixed(3)
+        bounds.xmin.toFixed(3),bounds.ymin.toFixed(3),
+        bounds.xmax.toFixed(3),bounds.ymax.toFixed(3)
     ].join(",");
 }
 
@@ -569,8 +553,7 @@ function clearSource(sourceId){
 
     const source = map.getSource(sourceId);
 
-    if(source)
-        source.setData({type:"FeatureCollection",features:[]});
+    if(source) source.setData({type:"FeatureCollection",features:[]});
 }
 
 function updateZoomHint(){
@@ -696,8 +679,7 @@ async function loadParkingPublic(){
 
         const source = map.getSource("parking-public");
 
-        if(source)
-            source.setData(geojson);
+        if(source) source.setData(geojson);
 
     }
     catch(error){
@@ -706,44 +688,25 @@ async function loadParkingPublic(){
 }
 
 /* ==========================================================
-   Style — priorité visuelle à la DURÉE plutôt qu'à la catégorie
+   Style — priorité visuelle à la durée
    ========================================================== */
 
-/* couleur par palier de durée : pâle/court -> vif/long-illimité */
 const DURATION_COLOR_MATCH = [
-    "match",
-    ["get","TYPE_STATIONNEMENT"],
+    "match",["get","TYPE_STATIONNEMENT"],
 
-    "Gratuit 30 min","#c8d6e5",
-    "Payant 30 min","#c8d6e5",
-
-    "Gratuit 60 min","#8ab4d8",
-    "Payant 60 min","#8ab4d8",
-
-    "Gratuit 120 min","#4f8fc7",
-    "Payant 90 min","#4f8fc7",
-    "Payant 120 min","#4f8fc7",
-
-    "Gratuit 180 min","#f4a93c",
-    "Gratuit 240 min","#f4a93c",
-
+    "Gratuit 30 min","#c8d6e5", "Payant 30 min","#c8d6e5",
+    "Gratuit 60 min","#8ab4d8", "Payant 60 min","#8ab4d8",
+    "Gratuit 120 min","#4f8fc7", "Payant 90 min","#4f8fc7", "Payant 120 min","#4f8fc7",
+    "Gratuit 180 min","#f4a93c", "Gratuit 240 min","#f4a93c",
     "Gratuit 15 heures","#e8632a",
-
-    "Gratuit illimité","#d81e2c",
-    "Payant illimité","#d81e2c",
-    "Habitant / nuit","#d81e2c",
-
+    "Gratuit illimité","#d81e2c", "Payant illimité","#d81e2c", "Habitant / nuit","#d81e2c",
     "Stationnement interdit","#5a5a5a",
 
-    /* défaut : zones jaunes, électrique, mobility, cars, ambulance,
-       police, autre, cases 2 roues (motos) -> neutre, discret */
     "#b8b8b8"
 ];
 
-/* largeur de base par catégorie (avant multiplicateur de zoom) */
 const DURATION_WIDTH_BASE = [
-    "match",
-    ["get","TYPE_STATIONNEMENT"],
+    "match",["get","TYPE_STATIONNEMENT"],
 
     "Gratuit 30 min",1.2, "Payant 30 min",1.2,
     "Gratuit 60 min",1.6, "Payant 60 min",1.6,
@@ -757,44 +720,41 @@ const DURATION_WIDTH_BASE = [
 ];
 
 const ZOOM_WIDTH_FACTOR =
-    ["interpolate",["linear"],["zoom"], 14,1.3, 20,3];
+    ["interpolate",["linear"],["zoom"], 13,1.6, 20,3];
 
 const DURATION_WIDTH_EXPR =
     ["*",DURATION_WIDTH_BASE,ZOOM_WIDTH_FACTOR];
 
-/* libellé court affiché directement sur chaque tronçon */
-const DURATION_LABEL_MATCH = [
-    "match",
-    ["get","TYPE_STATIONNEMENT"],
+const DURATION_OPACITY_MATCH = [
+    "match",["get","TYPE_STATIONNEMENT"],
 
-    "Gratuit 30 min","30 min",
-    "Payant 30 min","30 min €",
-    "Gratuit 60 min","1 h",
-    "Payant 60 min","1 h €",
-    "Gratuit 120 min","2 h",
-    "Payant 90 min","1 h 30 €",
-    "Payant 120 min","2 h €",
-    "Gratuit 180 min","3 h",
-    "Gratuit 240 min","4 h",
+    "Gratuit jaune",0.55, "Gratuit jaune spécial",0.55,
+    "Electrique",0.55, "Mobility",0.55, "Cars",0.55,
+    "Ambulance",0.55, "Police",0.55, "Autre",0.55,
+    "Cases 2 roues",0.55, "Stationnement interdit",0.85,
+
+    1
+];
+
+const ILLIMITE_TYPES = ["Gratuit illimité","Payant illimité","Habitant / nuit"];
+
+const DURATION_LABEL_MATCH = [
+    "match",["get","TYPE_STATIONNEMENT"],
+
+    "Gratuit 30 min","30 min", "Payant 30 min","30 min €",
+    "Gratuit 60 min","1 h", "Payant 60 min","1 h €",
+    "Gratuit 120 min","2 h", "Payant 90 min","1 h 30 €", "Payant 120 min","2 h €",
+    "Gratuit 180 min","3 h", "Gratuit 240 min","4 h",
     "Gratuit 15 heures","15 h",
-    "Gratuit illimité","Illimité",
-    "Payant illimité","Illimité €",
-    "Habitant / nuit","Résident",
-    "Gratuit jaune","Zone jaune",
-    "Gratuit jaune spécial","Zone jaune +",
-    "Electrique","Électrique",
-    "Mobility","Mobility",
-    "Cases 2 roues","Motos",
-    "Cars","Cars",
-    "Ambulance","Ambulance",
-    "Police","Police",
-    "Autre","Autre",
+    "Gratuit illimité","Illimité", "Payant illimité","Illimité €", "Habitant / nuit","Résident",
+    "Gratuit jaune","Zone jaune", "Gratuit jaune spécial","Zone jaune +",
+    "Electrique","Électrique", "Mobility","Mobility", "Cases 2 roues","Motos",
+    "Cars","Cars", "Ambulance","Ambulance", "Police","Police", "Autre","Autre",
     "Stationnement interdit","Interdit",
 
     ""
 ];
 
-/* durée + nombre de places sur deux lignes quand l'info existe */
 const DURATION_TEXT_FIELD = [
     "case",
     ["all",["has","NOMBRE_PLACES"],[">",["get","NOMBRE_PLACES"],0]],
@@ -802,45 +762,19 @@ const DURATION_TEXT_FIELD = [
     DURATION_LABEL_MATCH
 ];
 
-/* texte plus grand pour les durées longues / illimitées : c'est
-   l'information la plus utile pour savoir où se garer durablement */
 const DURATION_TEXT_SIZE = [
     "case",
     ["in",["get","TYPE_STATIONNEMENT"],["literal",["Gratuit illimité","Payant illimité","Habitant / nuit","Gratuit 15 heures"]]],
-    ["interpolate",["linear"],["zoom"], 15,12, 20,17],
-    ["interpolate",["linear"],["zoom"], 15,9, 20,13]
+    ["interpolate",["linear"],["zoom"], 14,12, 20,17],
+    ["interpolate",["linear"],["zoom"], 14,9, 20,13]
 ];
-
-/* opacité réduite pour les catégories "hors sujet durée" */
-const DURATION_OPACITY_MATCH = [
-    "match",
-    ["get","TYPE_STATIONNEMENT"],
-
-    "Gratuit jaune",0.55,
-    "Gratuit jaune spécial",0.55,
-    "Electrique",0.55,
-    "Mobility",0.55,
-    "Cars",0.55,
-    "Ambulance",0.55,
-    "Police",0.55,
-    "Autre",0.55,
-    "Cases 2 roues",0.55,
-    "Stationnement interdit",0.85,
-
-    1
-];
-
-const ILLIMITE_TYPES = ["Gratuit illimité","Payant illimité","Habitant / nuit"];
 
 function typeColorForPopup(type){
 
     const pairs = DURATION_COLOR_MATCH.slice(2,-1);
 
-    for(let i=0;i<pairs.length;i+=2){
-
-        if(pairs[i]===type)
-            return pairs[i+1];
-    }
+    for(let i=0;i<pairs.length;i+=2)
+        if(pairs[i]===type) return pairs[i+1];
 
     return "#b8b8b8";
 }
@@ -849,10 +783,35 @@ function addAllSourcesAndLayers(){
 
     const emptyFC = {type:"FeatureCollection",features:[]};
 
+    /* --- relief DEM (Mappes sardes) : hillshade au-dessus du plan --- */
+
+    map.addSource("terrain",{
+        type:"raster-dem",
+        url:TERRAIN_DEM_URL,
+        tileSize:256,
+        encoding:"terrarium"
+    });
+
+    map.addLayer({
+        id:"hillshade",
+        type:"hillshade",
+        source:"terrain",
+        layout:{ visibility:"none" },
+        paint:{
+            "hillshade-exaggeration":1,
+            "hillshade-illumination-direction":315,
+            "hillshade-illumination-anchor":"viewport",
+            "hillshade-illumination-altitude":45,
+            "hillshade-shadow-color":"#8a8a8a",
+            "hillshade-highlight-color":"#ffffff",
+            "hillshade-accent-color":"#d8d8d8"
+        }
+    });
+
+    /* --- stationnement --- */
+
     map.addSource("stationnement",{type:"geojson",data:emptyFC,buffer:1,tolerance:1});
 
-    /* halo rouge sous les places illimitées / longue durée résident,
-       pour qu'elles soient perceptibles même en un coup d'oeil */
     map.addLayer({
         id:"stationnement-glow-illimite",
         type:"line",
@@ -861,28 +820,12 @@ function addAllSourcesAndLayers(){
         layout:{"line-cap":"round","line-join":"round"},
         paint:{
             "line-color":"#d81e2c",
-            "line-width":["interpolate",["linear"],["zoom"], 14,8, 20,22],
+            "line-width":["interpolate",["linear"],["zoom"], 13,8, 20,22],
             "line-opacity":0.28,
             "line-blur":2.5
         }
     });
 
-    /* liseré blanc sous les traits "normaux" pour qu'ils se détachent
-       nettement du fond de plan clair (utile pour les couleurs pâles) */
-    map.addLayer({
-        id:"stationnement-halo",
-        type:"line",
-        source:"stationnement",
-        filter:["!",["in",["get","TYPE_STATIONNEMENT"],["literal",ILLIMITE_TYPES]]],
-        layout:{"line-cap":"round","line-join":"round"},
-        paint:{
-            "line-color":"#ffffff",
-            "line-width":["+",DURATION_WIDTH_EXPR,1.8],
-            "line-opacity":0.9
-        }
-    });
-
-    /* trait principal, coloré/épaissi selon la durée */
     map.addLayer({
         id:"stationnement-line",
         type:"line",
@@ -896,8 +839,6 @@ function addAllSourcesAndLayers(){
         }
     });
 
-    /* "Payant illimité" — même couleur vive que les autres illimités,
-       mais tireté pour le distinguer du gratuit illimité */
     map.addLayer({
         id:"stationnement-dash-payant-illimite",
         type:"line",
@@ -911,7 +852,6 @@ function addAllSourcesAndLayers(){
         }
     });
 
-    /* mise en évidence optionnelle des cases motos */
     map.addLayer({
         id:"motos-highlight",
         type:"line",
@@ -920,18 +860,16 @@ function addAllSourcesAndLayers(){
         layout:{"line-cap":"round","line-join":"round"},
         paint:{
             "line-color":"#8b5cf6",
-            "line-width":["interpolate",["linear"],["zoom"], 14,3, 20,7],
+            "line-width":["interpolate",["linear"],["zoom"], 13,3, 20,7],
             "line-opacity":0.95
         }
     });
 
-    /* durée (+ nombre de places) écrite directement sur chaque tronçon,
-       pour savoir où se garer sans avoir à cliquer */
     map.addLayer({
         id:"stationnement-duration-label",
         type:"symbol",
         source:"stationnement",
-        minzoom:15,
+        minzoom:14,
         filter:["!=",DURATION_LABEL_MATCH,""],
         layout:{
             "symbol-placement":"line-center",
@@ -952,7 +890,8 @@ function addAllSourcesAndLayers(){
         }
     });
 
-    /* parkings publics (points, statique) */
+    /* --- parkings publics --- */
+
     map.addSource("parking-public",{type:"geojson",data:emptyFC});
 
     map.addLayer({
@@ -961,7 +900,7 @@ function addAllSourcesAndLayers(){
         source:"parking-public",
         paint:{
             "circle-radius":["interpolate",["linear"],["zoom"], 11,5, 18,12],
-            "circle-color":"#3a5f52",
+            "circle-color":"#111111",
             "circle-stroke-color":"#ffffff",
             "circle-stroke-width":2
         }
@@ -1050,24 +989,50 @@ function bindPopups(){
 
         openPopup(
             e.lngLat,
-            "<div class=\"parking-popup\"><h3>🅿️ "+(p.NOM||"Parking")+"</h3><table>"+rows.join("")+"</table></div>"
+            "<div class=\"parking-popup\"><h3>"+(p.NOM||"Parking")+"</h3><table>"+rows.join("")+"</table></div>"
         );
     });
 }
 
 /* ==========================================================
-   Panneau + toggles
+   Panneau "Calques"
    ========================================================== */
 
-function bindLegendPanel(){
+function bindLayersSheet(){
 
-    const toggle = document.getElementById("legend-toggle");
-    const panel = document.getElementById("legend-panel");
+    const btn = document.getElementById("layers-toggle");
+    const sheet = document.getElementById("layers-sheet");
+    const backdrop = document.getElementById("sheet-backdrop");
 
-    toggle.addEventListener("click",()=>panel.classList.toggle("hidden"));
+    function openSheet(){
+        sheet.classList.add("open");
+        backdrop.classList.add("open");
+    }
 
-    if(window.innerWidth>900)
-        panel.classList.remove("hidden");
+    function closeSheet(){
+        sheet.classList.remove("open");
+        backdrop.classList.remove("open");
+    }
+
+    btn.addEventListener("click",()=>{
+
+        if(sheet.classList.contains("open")) closeSheet();
+        else openSheet();
+    });
+
+    backdrop.addEventListener("click",closeSheet);
+
+    document.querySelectorAll('input[name="basemap"]').forEach(radio=>{
+
+        radio.addEventListener("change",e=>{
+
+            if(map.getLayer("hillshade"))
+                map.setLayoutProperty(
+                    "hillshade","visibility",
+                    e.target.value==="relief" ? "visible" : "none"
+                );
+        });
+    });
 
     document.getElementById("chk-motos").addEventListener("change",e=>{
 
@@ -1093,7 +1058,7 @@ map.on("load",()=>{
 
     addAllSourcesAndLayers();
     bindPopups();
-    bindLegendPanel();
+    bindLayersSheet();
 
     loadStationnement();
     loadParkingPublic();
